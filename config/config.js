@@ -30,6 +30,7 @@ let consumer = {
     key: "",
     secret: ""
 };
+var shortcode = ""
 let host = "http://127.0.0.1:20213";
 module.exports = {
     con: mongoose,
@@ -38,5 +39,6 @@ module.exports = {
     dbName: dbName,
     host: host,
     user: user,
-    consumer:consumer
+    consumer:consumer,
+    shortcode:shortcode
 };

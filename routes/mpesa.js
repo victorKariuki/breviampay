@@ -1,0 +1,69 @@
+var express = require("express");
+var router = express.Router();
+
+// ValidationURL || ConfirmationURL || CallbackUrl
+router.post("/:base/", function (req, res) {
+  var base = req.params.id;
+  switch (base) {
+    // C2B ValidationURL - /api/v1/c2b/validation
+    case "validation":
+      var message = {
+        ResultCode: 0,
+        ResultDesc: "Success",
+        ThirdPartyTransID: "1234567890",
+      };
+      logmessage(req, res, "C2B", message);
+      break;
+      // C2B ConfirmationURL - /api/v1/c2b/confirmation
+    case "confirmation":
+      var message = {
+        ResultCode: 0,
+        ResultDesc: "Success",
+      };
+      logmessage(req, res, "C2B", message);
+      break;
+      // Callback  - /api/v1/callback
+    case "callback":
+      logmessage(req, res, "stkpush");
+      break;
+  }
+});
+// QueueTimeoutURL || ResultURL
+router.post("/:base/:id", function (req, res) {
+  var id = req.params.id;
+  switch (id) {
+    // B2C QueueTimeoutURL - /api/v1/b2c/timeout
+    case "b2c":
+      logmessage(req, res, 'B2C');
+      break;
+      // B2B QueueTimeoutURL - /api/v1/b2b/timeout
+    case "b2b":
+      logmessage(req, res, "B2B");
+      break;
+      // accountBalance QueueTimeoutURL - /api/v1/accountBalance/timeout
+    case "acB":
+      logmessage(req, res, "accountBalance");
+      break;
+      // reverse QueueTimeoutURL - /api/v1/reverse/timeout
+    case "reverse":
+      logmessage(req, res, "reverse");
+      break;
+      // status QueueTimeoutURL - /api/v1/status/timeout
+    case "status":
+      logmessage(req, res, "status");
+      break;
+  }
+});
+module.exports = router;
+
+function logmessage(req, res, title, message = {
+  ResponseCode: "00000000",
+  ResponseDesc: "success",
+}) {
+  var base = req.params.base.toUpperCase();
+  console.log(`-----------${title} ${base}------------`);
+  console.log(req.body);
+  console.log("-----------------------");
+
+  res.json(message);
+}
