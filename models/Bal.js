@@ -2,9 +2,19 @@ const con = require("../config/config").con;
 const Schema = con.Schema;
 
 let date = Date.now();
+let key_valSchema = new Schema(
+  {
+    Key: String,
+    Value: String,
+  },
+  {
+    _id: false,
+    autoIndex: false,
+  }
+);
 var BalSchema = new Schema(
   {
-    dateofCreation: {
+    timestamp: {
       type: Number,
       default: date,
     },
@@ -15,19 +25,14 @@ var BalSchema = new Schema(
     ConversationID: String,
     TransactionID: String,
     ResultParameters: {
-      ResultParameter: [
-        {
-          Key: String,
-          Value: String,
-        }
-      ]
+      ResultParameter: [key_valSchema],
     },
     ReferenceData: {
       ReferenceItem: {
         Key: String,
         Value: String,
-      }
-    }
+      },
+    },
   },
   {
     _id: true,

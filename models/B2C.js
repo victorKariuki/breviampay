@@ -2,10 +2,21 @@ const con = require("../config/config").con;
 const Schema = con.Schema;
 
 let date = Date.now();
-var B2BSchema = new Schema({
-    dateofCreation: {
-        type: Number,
-        default: date,
+let key_valSchema = new Schema(
+  {
+    Key: String,
+    Value: String,
+  },
+  {
+    _id: false,
+    autoIndex: false,
+  }
+);
+var B2CSchema = new Schema(
+  {
+    timestamp: {
+      type: Number,
+      default: date,
     },
     ResultType: String,
     ResultCode: String,
@@ -14,21 +25,20 @@ var B2BSchema = new Schema({
     ConversationID: String,
     TransactionID: String,
     ResultParameters: {
-        ResultParameter: [{
-            Key: String,
-            Value: String,
-        }],
+      ResultParameter: [key_valSchema],
     },
     ReferenceData: {
-        ReferenceItem: {
-            Key: String,
-            Value: String
-        }
+      ReferenceItem: {
+        Key: String,
+        Value: String,
+      },
     },
-}, {
+  },
+  {
     _id: true,
     autoIndex: false,
-});
+  }
+);
 
-B2B = con.model("B2B", B2BSchema);
-module.exports = B2B;
+B2C = con.model("B2C", B2CSchema);
+module.exports = B2C;

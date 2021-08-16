@@ -3,8 +3,8 @@ const Schema = con.Schema;
 
 let date = Date.now();
 var AuthSchema = new Schema({
-  dateofCreation: {
-    type: Number,
+  timestamp: {
+    type: String,
     default: date,
   },
   access_token: String,

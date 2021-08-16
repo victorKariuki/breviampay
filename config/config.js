@@ -26,11 +26,38 @@ let user = {
     pass: "xiozwjab#@whina%1969",
     to: "victor.k@breviamtechnologies.xyz",
 };
-let consumer = {
-    key: "",
-    secret: ""
+var mpesaApi = {
+    consumer: {
+        key: "",
+        secret: "",
+    },
+    initiator: "",
+    sender: "",
+    pass: "",
+    shortcode: "",
+    timestamp: function tStamp(date = new Date()) {
+        function add(str, x) {
+            if (x.length == 1) {
+                return (str += "0" + x);
+            }
+            return (str += x);
+        }
+        let raw = [
+            date.getFullYear().toString(),
+            (date.getMonth() + 1).toString(),
+            date.getDate().toString(),
+            date.getHours().toString(),
+            date.getMinutes().toString(),
+            date.getSeconds(),
+        ];
+        let timestamp = "";
+        raw.forEach((element) => {
+            timestamp = add(timestamp, element);
+        });
+        return timestamp;
+    },
+    securityCredential: "",
 };
-var shortcode = ""
 let host = "http://127.0.0.1:20213";
 module.exports = {
     con: mongoose,
@@ -39,6 +66,5 @@ module.exports = {
     dbName: dbName,
     host: host,
     user: user,
-    consumer:consumer,
-    shortcode:shortcode
+    mpesaApi: mpesaApi
 };

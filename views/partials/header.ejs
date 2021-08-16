@@ -1,0 +1,56 @@
+<div class="py-1 bg-primary border rounded d-none d-lg-block">
+    <div class="container">
+        <div class="row no-gutters d-flex align-items-start align-items-center px-md-0">
+            <div class="col-lg-12 d-block">
+                <div class="row d-flex">
+                    <div class="col-md pr-4 d-flex topper align-items-center">
+                        <div class="icon mr-2 d-flex justify-content-center align-items-center">
+                            <span class="icon-phone2"></span></div>
+                        <span class="text" id="pay_contact_tel"></span>
+                    </div>
+                    <div class="col-md pr-4 d-flex topper align-items-center">
+                        <div class="icon mr-2 d-flex justify-content-center align-items-center"><span
+                                class="icon-paper-plane"></span></div>
+                        <span class="text" id="pay_contact_mail"></span>
+                    </div>
+                    <div class="col-md-5 pr-4 d-flex topper align-items-center text-lg-right">
+                        <span class="text">Fast, Convinient and Reliable.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<nav class="navbar navbar-expand-lg navbar-dark don_navbar bg-dark don-navbar-light" id="don-navbar">
+    <div class="container">
+        <button aria-label="Off Canvas" class="navbar-toggler px-3 border-0 don" type="button" data-toggle="offcanvas">
+            <div class="row">
+                <div class="navbar-toggler-icon"></div>
+            </div>
+        </button>
+        <a class="navbar-brand" href="/">Spaza</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#don-nav"
+            aria-controls="don-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="oi oi-menu"></span> Menu
+        </button>
+
+        <div class="collapse navbar-collapse" id="don-nav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active"><a href="/" class="nav-link">Home</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle nav-item dta dta-colored" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span id="nav-User_name"></span>
+                        <span class="icon-user"></span>
+                    </a>
+                    <div class="dropdown-menu" style="right:0;left:auto;" aria-labelledby="dropdown04">
+                        <a class="dropdown-item" href="/user">My Account</a>
+                        <a class="dropdown-item" href="/user/logout">Logout</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id="messages" class='d-flex justify-content-center'>
+    <%- include ./message %>
+</div>

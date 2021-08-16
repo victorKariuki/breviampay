@@ -4,7 +4,7 @@ const Schema = con.Schema;
 let date = Date.now();
 var ConfirmSchema = new Schema(
   {
-    dateofCreation: {
+    timestamp: {
       type: String,
       default: date,
     },

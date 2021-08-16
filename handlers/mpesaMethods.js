@@ -1,8 +1,45 @@
-var request = require("request");
-module.exports = mpesaApi;
-
-function mpesaApi(consumer_key, consumer_secret) {
+function mpesaApi() {
+    var request = require("request");
+    var config = require("../config/config");
+    const B2B = require("../models/B2B");
+    const B2C = require("../models/B2C");
+    const Bal = require("../models/Bal");
+    const Reverse = require("../models/Reverse");
+    const Status = require("../models/Status");
+    const StkAccept = require("../models/Stkpush_accepted");
+    const StkCancel = require("../models/Stkpush_cancelled");
+    const StkQuery = require("../models/Stkpush_query");
     var self = this;
+    this.oauth_token;
+    this.mpesaResponse = {
+        1: "Insufficient Funds",
+        2: "Less Than Minimum Transaction Value",
+        3: "More Than Maximum Transaction Value",
+        4: "Would Exceed Daily Transfer Limit",
+        5: "Would Exceed Minimum Balance",
+        6: "Unresolved Primary Party",
+        7: "Unresolved Receiver Party",
+        8: "Would Exceed Maxiumum Balance",
+        11: "Debit Account Invalid",
+        12: "Credit Account Invaliud",
+        13: "Unresolved Debit Account",
+        14: "Unresolved Credit Account",
+        15: "Duplicate Detected",
+        17: "Internal Failure",
+        20: "Unresolved Initiator",
+        26: "Traffic blocking condition in place",
+    };
+    this.mpesaErrCode = {
+        400: "Bad Request",
+        401: "Unauthorized",
+        403: "Forbidden",
+        404: "Not Found",
+        405: "Method Not Allowed",
+        406: "Not Acceptable – You requested a format that isn’t json",
+        429: "Too Many Requests",
+        500: "Internal Server Error – We had a problem with our server. Try again later.",
+        503: "Service Unavailable – We’re temporarily offline for maintenance. Please try again later.",
+    };
     (this.b2c = function (body, callback) {
         var url = "https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentrequest",
             auth = "Bearer " + self.oauth_token;
@@ -13,15 +50,15 @@ function mpesaApi(consumer_key, consumer_secret) {
                     Authorization: auth,
                 },
                 json: {
-                    InitiatorName: body.InitiatorName,
-                    SecurityCredential: SecurityCredential,
+                    InitiatorName: initiatorName,
+                    SecurityCredential: config.mpesaApi.securityCredential,
                     CommandID: body.CommandID,
                     Amount: body.Amount,
                     PartyA: body.PartyA,
-                    PartyB: body.PartyB,
+                    PartyB: config.mpesaApi.shortcode,
                     Remarks: body.Remarks,
-                    QueueTimeOutURL: body.host + "/timeout/b2c",
-                    ResultURL: body.host + "/result/b2c",
+                    QueueTimeOutURL: config.host + "/timeout/b2c",
+                    ResultURL: config.host + "/result/b2c",
                     Occasion: body.Occasion,
                 },
             },
@@ -29,8 +66,17 @@ function mpesaApi(consumer_key, consumer_secret) {
                 // TODO: Use the body object to extract the response
                 if (error) {
                     console.log(error);
+                    callback(false);
                 } else {
-                    callback(response, body)
+                     var record = new B2C(body);
+                     record
+                       .save()
+                       .then((doc) => {
+                         callback(response, body);
+                       })
+                       .catch((err) => {
+                         console.log(err);
+                       });
                 }
             }
         );
@@ -46,32 +92,41 @@ function mpesaApi(consumer_key, consumer_secret) {
                     Authorization: auth,
                 },
                 json: {
-                    Initiator: body.Initiator,
-                    SecurityCredential: SecurityCredential,
+                    Initiator: config.mpesaApi.initiator,
+                    SecurityCredential: config.mpesaApi.securityCredential,
                     CommandID: body.CommandID,
-                    SenderIdentifierType: body.SenderIdentifierType,
+                    SenderIdentifierType: config.mpesaApi.sender,
                     RecieverIdentifierType: body.RecieverIdentifierType,
                     Amount: body.Amount,
                     PartyA: body.PartyA,
-                    PartyB: body.PartyB,
+                    PartyB: config.mpesaApi.shortcode,
                     AccountReference: body.AccountReference,
                     Remarks: body.Remarks,
-                    QueueTimeOutURL: body.host + "/timeout/b2b",
-                    ResultURL: body.host + "/result/b2b",
+                    QueueTimeOutURL: config.host + "/timeout/b2b",
+                    ResultURL: config.host + "/result/b2b",
                 },
             },
             function (error, response, body) {
                 // TODO: Use the body object to extract the response
                 if (error) {
                     console.log(error);
+                    callback(false);
                 } else {
-                    callback(response, body);
+                     var record = new B2B(body);
+                     record
+                       .save()
+                       .then((doc) => {
+                         callback(response, body);
+                       })
+                       .catch((err) => {
+                         console.log(err);
+                       });
                 }
             }
         );
         return url;
     }),
-    (this.c2b = function (body, callback) {
+    (this.c2bRegisteUrl = function (ResponseType, callback) {
         var url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl";
         auth = "Bearer " + self.oauth_token;
         request({
@@ -81,16 +136,17 @@ function mpesaApi(consumer_key, consumer_secret) {
                     Authorization: auth,
                 },
                 json: {
-                    ShortCode: body.ShortCode,
-                    ResponseType: body.ResponseType,
-                    ConfirmationURL: body.host + "/confirmation",
-                    ValidationURL: body.host + "/validation",
+                    ShortCode: config.mpesaApi.shortcode,
+                    ResponseType: ResponseType,
+                    ConfirmationURL: config.host + "/confirmation/c2b",
+                    ValidationURL: config.host + "/validation/c2b",
                 },
             },
             function (error, response, body) {
                 // TODO: Use the body object to extract the
                 if (error) {
                     console.log(error);
+                    callback(false);
                 } else {
                     callback(response, body);
                 }
@@ -108,7 +164,7 @@ function mpesaApi(consumer_key, consumer_secret) {
                 },
                 json: {
                     //Fill in the request parameters with valid values
-                    ShortCode: body.ShortCode,
+                    ShortCode: config.mpesaApi.shortcode,
                     CommandID: body.CommandID,
                     Amount: body.Amount,
                     Msisdn: body.Msisdn,
@@ -119,6 +175,7 @@ function mpesaApi(consumer_key, consumer_secret) {
                 // TODO: Use the body object to extract the response
                 if (error) {
                     console.log(error);
+                    callback(false);
                 } else {
                     callback(response, body);
                 }
@@ -126,8 +183,7 @@ function mpesaApi(consumer_key, consumer_secret) {
         );
     }),
     (this.accountBalance = function (body, callback) {
-        var url =
-            "https://sandbox.safaricom.co.ke/mpesa/accountbalance/v1/query";
+        var url = "https://sandbox.safaricom.co.ke/mpesa/accountbalance/v1/query";
         auth = "Bearer " + self.oauth_token;
         request({
                 method: "POST",
@@ -136,22 +192,31 @@ function mpesaApi(consumer_key, consumer_secret) {
                     Authorization: auth,
                 },
                 json: {
-                    Initiator: body.Initiator,
-                    SecurityCredential: body.SecurityCredential,
+                    Initiator: config.mpesaApi.initiator,
+                    SecurityCredential: config.mpesaApi.securityCredential,
                     CommandID: "AccountBalance",
                     PartyA: body.PartyA,
                     IdentifierType: "4",
                     Remarks: body.Remarks,
-                    QueueTimeOutURL: body.host + "/result/acB",
-                    ResultURL: body.host + "/timeout/acB",
+                    QueueTimeOutURL: config.host + "/result/acB",
+                    ResultURL: config.host + "/timeout/acB",
                 },
             },
             function (error, response, body) {
                 // TODO: Use the body object to extract the response
                 if (error) {
                     console.log(error);
+                    callback(false);
                 } else {
-                    callback(response, body);
+                    var record = new Bal(body);
+                    record
+                      .save()
+                      .then((doc) => {
+                        callback(response, body);
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
                 }
             }
         );
@@ -167,14 +232,14 @@ function mpesaApi(consumer_key, consumer_secret) {
                     Authorization: auth,
                 },
                 json: {
-                    Initiator: body.Initiator,
-                    SecurityCredential: body.SecurityCredential,
+                    Initiator: config.mpesaApi.initiator,
+                    SecurityCredential: config.mpesaApi.securityCredential,
                     CommandID: "TransactionStatusQuery",
                     TransactionID: body.TransactionID,
                     PartyA: body.PartyA,
                     IdentifierType: "1",
-                    ResultURL: body.host + "/result/status",
-                    QueueTimeOutURL: body.host + "/timeout/status",
+                    ResultURL: config.host + "/result/status",
+                    QueueTimeOutURL: config.host + "/timeout/status",
                     Remarks: body.Remarks,
                     Occasion: body.Occasion,
                 },
@@ -183,8 +248,17 @@ function mpesaApi(consumer_key, consumer_secret) {
                 // TODO: Use the body object to extract the response
                 if (error) {
                     console.log(error);
+                    callback(false);
                 } else {
-                    callback(response, body);
+                    var record = new Status(body);
+                    record
+                      .save()
+                      .then((doc) => {
+                        callback(response, body);
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
                 }
             }
         );
@@ -199,15 +273,15 @@ function mpesaApi(consumer_key, consumer_secret) {
                     Authorization: auth,
                 },
                 json: {
-                    Initiator: body.Initiator,
-                    SecurityCredential: body.SecurityCredential,
+                    Initiator: config.mpesaApi.initiator,
+                    SecurityCredential: config.mpesaApi.securityCredential,
                     CommandID: "TransactionReversal",
                     TransactionID: body.TransactionID,
                     Amount: body.Amount,
                     ReceiverParty: body.ReceiverParty,
                     RecieverIdentifierType: "4",
-                    ResultURL: body.host + "/result/reverse",
-                    QueueTimeOutURL: body.host + "/timeout/reverse",
+                    ResultURL: config.host + "/result/reverse",
+                    QueueTimeOutURL: config.host + "/timeout/reverse",
                     Remarks: body.Remarks,
                     Occasion: body.Occasion,
                 },
@@ -216,8 +290,17 @@ function mpesaApi(consumer_key, consumer_secret) {
                 // TODO: Use the body object to extract the response
                 if (error) {
                     console.log(error);
+                    callback(false);
                 } else {
-                    callback(response, body);
+                    var record = new Reverse(body);
+                    record
+                      .save()
+                      .then((doc) => {
+                        callback(response, body);
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
                 }
             }
         );
@@ -233,25 +316,47 @@ function mpesaApi(consumer_key, consumer_secret) {
                     Authorization: auth,
                 },
                 json: {
-                    BusinessShortCode: body.BusinessShortCode,
-                    Password: body.Password,
-                    Timestamp: body.Timestamp,
+                    BusinessShortCode: config.mpesaApi.shortcode,
+                    Password: config.mpesaApi.pass,
+                    Timestamp: config.mpesaApi.timestamp(),
                     TransactionType: "CustomerPayBillOnline",
                     Amount: body.Amount,
                     PartyA: body.PartyA,
-                    PartyB: body.PartyB,
+                    PartyB: config.mpesaApi.shortcode,
                     PhoneNumber: body.PhoneNumber,
-                    CallBackURL: body.host + "/callback",
+                    CallBackURL: config.host + "/callback",
                     AccountReference: body.AccountReference,
-                    TransactionDesc: body.TransactionDesc,
+                    TransactionDesc: body.TransactionDesc
                 },
             },
             function (error, response, body) {
                 // TODO: Use the body object to extract the response
                 if (error) {
                     console.log(error);
+                    callback(false);
+
                 } else {
-                    callback(response, body);
+                    if (body.ResultCode == 0) {
+                        var record = new StkAccept(body);
+                        record
+                          .save()
+                          .then((doc) => {
+                            callback(response, body);
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          });
+                    } else {
+                        var record = new StkCancel(body);
+                        record
+                          .save()
+                          .then((doc) => {
+                            callback(response, body);
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          });
+                    }
                 }
             }
         );
@@ -266,9 +371,9 @@ function mpesaApi(consumer_key, consumer_secret) {
                     Authorization: auth,
                 },
                 json: {
-                    BusinessShortCode: body.BusinessShortCode,
-                    Password: body.Password,
-                    Timestamp: body.Timestamp,
+                    BusinessShortCode: config.mpesaApi.shortcode,
+                    Password: config.mpesaApi.pass,
+                    Timestamp: config.mpesaApi.timestamp(),
                     CheckoutRequestID: body.CheckoutRequestID,
                 },
             },
@@ -276,8 +381,14 @@ function mpesaApi(consumer_key, consumer_secret) {
                 // TODO: Use the body object to extract the response
                 if (error) {
                     console.log(error);
+                    callback(false);
                 } else {
-                    callback(response, body);
+                    var record = new StkQuery(body);
+                    record.save().then(doc => {
+                        callback(response, body);
+                    }).catch(err => {
+                        console.log(err);
+                    })
                 }
             }
         );
@@ -285,9 +396,9 @@ function mpesaApi(consumer_key, consumer_secret) {
     (this.auth = function (consumer_key, consumer_secret, obj) {
         var url =
             "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
-            buffer = new Buffer.from(
-                consumer_key + ":" + consumer_secret
-            ).toString("base64"),
+            buffer = new Buffer.from(consumer_key + ":" + consumer_secret).toString(
+                "base64"
+            ),
             auth = "Basic " + buffer;
         request({
                 url: url,
@@ -303,14 +414,21 @@ function mpesaApi(consumer_key, consumer_secret) {
                         self.oauth_token = body.access_token;
                     }, (parseInt(body.expiry_date) + 1) * 1000);
                     self.oauth_token = body.access_token;
+                    
                 }
             }
         );
         return obj;
     }),
-    this.oauth_token;
-    function getToken(consumer_key, consumer_secret) {
+    this.getToken = function (consumer_key, consumer_secret) {
         self.auth(consumer_key, consumer_secret);
     };
-    getToken(consumer_key, consumer_secret);
+    this.init = function () {
+        self.getToken(
+            config.mpesaApi.consumer.key,
+            config.mpesaApi.consumer.secret
+        );
+    };
+
 }
+module.exports = mpesaApi;

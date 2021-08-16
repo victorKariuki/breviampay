@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <%include ./partials/styles%>
+    <link rel="stylesheet" href="/assets/css/signin.css">
+</head>
+<body class="text-center">
+    <main class="form-signin">
+        <form name="login" action="/user/login" method="post" accept-charset="utf-8">
+            <h1 class="h3 mb-3 fw-normal">Sign in</h1>
+
+            <div class="form-floating">
+                <input type="tel" name='phoneNumber' class="form-control" id="floatingInput" placeholder="Phone number"
+                    required autofocus>
+                <label for="floatingInput">Phone Number</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" name='password' class="form-control" id="floatingPassword"
+                    placeholder="Password">
+                <label for="floatingPassword">Password</label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+            <p class="text-center mb-0 col-12">You don't have an account? <a href="/user/register" class="text-danger">Click
+                    here!</a></p>
+        </form>
+    </main>
+</body>
+</html>

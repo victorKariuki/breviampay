@@ -3,7 +3,7 @@ const Schema = con.Schema;
 
 let date = Date.now();
 var CancelledSchema = new Schema({
-  dateofCreation: {
+  timestamp: {
     type: Number,
     default: date,
   },

@@ -6,12 +6,12 @@ let key_valSchema = new Schema({
   Key: String,
   Value: String,
 }, {
-  _id: true,
+  _id: false,
   autoIndex: false,
 });
 var B2BSchema = new Schema(
   {
-    dateofCreation: {
+    timestamp: {
       type: Number,
       default: date,
     },
@@ -22,15 +22,10 @@ var B2BSchema = new Schema(
     ConversationID: String,
     TransactionID: String,
     ResultParameters: {
-      ResultParameter: [key_valSchema],
+      ResultParameter: [key_valSchema]
     },
     ReferenceData: {
-      ReferenceItem: [
-        {
-          Key: String,
-          Value: String,
-        },
-      ],
+      ReferenceItem: [key_valSchema]
     },
   },
   {

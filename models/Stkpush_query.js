@@ -2,9 +2,9 @@ const con = require("../config/config").con;
 const Schema = con.Schema;
 
 let date = Date.now();
-var ConfirmSchema = new Schema(
+var QuerySchema = new Schema(
   {
-    dateofCreation: {
+    timestamp: {
       type: Number,
       default: date,
     },
@@ -21,5 +21,5 @@ var ConfirmSchema = new Schema(
   }
 );
 
-Confirm = con.model("Confirm", ConfirmSchema);
-module.exports = Confirm;
+Query = con.model("Query", QuerySchema);
+module.exports = Query;

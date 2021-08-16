@@ -1,0 +1,37 @@
+{
+    "paymentMethods": [{
+            "label": "other",
+            "data": {
+                "supportedMethods": [{
+                    "label": "mpesa",
+                    "data": [{
+                        "key": "",
+                        "value": ""
+                    }]
+                }]
+            }
+        },
+        {
+            "label": "basic_card",
+            "data": {
+                "supportedNetworks": ["visa", "mastercard", "discover", "unionpay"]
+            }
+        }
+    ],
+    "paymentDetails": {
+        "order": [{
+            "label": "",
+            "amount": {
+                "currency": "",
+                "value": ""
+            }
+        }],
+        "total": {
+            "label": "Total",
+            "amount": {
+                "currency": "",
+                "value": ""
+            }
+        }
+    }
+}

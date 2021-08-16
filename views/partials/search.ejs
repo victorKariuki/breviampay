@@ -1,0 +1,25 @@
+<div class="sidebar-box mb-0">
+    <form action="/search" class="search-form">
+        <div class="form-group">
+            <span class="icon ion-ios-search"></span>
+            <input type="text" class="form-control" id="spaza-search" placeholder="Search...">
+            <div class="spaza-searchDisplay p-2 d-none">
+                Found <span class="search-items">0</span> Item(s)
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    $(".search-form").on("keyup", (evt => {
+        POS.getJsonData('/api/search?searchitem=' + evt.target.value + '&scope=' + window.location.pathname,
+            (res) => {
+                if (res.msg == 0) {
+                    console.log(res.data.scope.split('/').filter(key=>{
+                        return key !== ""
+                    }).length)
+                }else{
+                    console.log(`found ${res.msg} item(s)`)
+                }
+            })
+    }))
+</script>
