@@ -3,8 +3,6 @@ var router = express.Router();
 var fs = require("fs");
 var mpesaApi = require("../handlers/mpesaMethods");
 const User = require("../models/User");
-const Incoming = require("../models/IncominingTrans");
-const Outgoing = require("../models/OutgoingTrans");
 var {
   ensureAuthenticated,
   forwardAuthenticated
@@ -15,6 +13,7 @@ let Mpesa = new mpesaApi();
 router.get("/queryMethods", (req, res) => {
   getItemsFile("./config/config.json", (resp) => {
     if (resp) {
+      //console.log(resp);
       res.status(200).json({
         msg: "Ok",
         data: resp,
@@ -167,7 +166,7 @@ module.exports = router;
 function getItemsFile(file, callback) {
   fs.readFile(file, "utf8", (err, data) => {
     if (err) throw err;
-    console.log(data);
+    //console.log(data);
     callback(JSON.parse(data));
   });
 }

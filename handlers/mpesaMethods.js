@@ -1,16 +1,9 @@
 function mpesaApi() {
     var request = require("request");
     var config = require("../config/config");
-    const B2B = require("../models/B2B");
-    const B2C = require("../models/B2C");
-    const Bal = require("../models/Bal");
-    const Reverse = require("../models/Reverse");
-    const Status = require("../models/Status");
-    const StkAccept = require("../models/Stkpush_accepted");
-    const StkCancel = require("../models/Stkpush_cancelled");
-    const StkQuery = require("../models/Stkpush_query");
     var self = this;
     this.oauth_token;
+    
     this.mpesaResponse = {
         1: "Insufficient Funds",
         2: "Less Than Minimum Transaction Value",
@@ -68,15 +61,7 @@ function mpesaApi() {
                     console.log(error);
                     callback(false);
                 } else {
-                     var record = new B2C(body);
-                     record
-                       .save()
-                       .then((doc) => {
-                         callback(response, body);
-                       })
-                       .catch((err) => {
-                         console.log(err);
-                       });
+                     callback(response, body);
                 }
             }
         );
@@ -112,7 +97,8 @@ function mpesaApi() {
                     console.log(error);
                     callback(false);
                 } else {
-                     var record = new B2B(body);
+                    callback(response, body);
+                     /* var record = new B2B(body);
                      record
                        .save()
                        .then((doc) => {
@@ -120,7 +106,7 @@ function mpesaApi() {
                        })
                        .catch((err) => {
                          console.log(err);
-                       });
+                       }); */
                 }
             }
         );
@@ -208,15 +194,7 @@ function mpesaApi() {
                     console.log(error);
                     callback(false);
                 } else {
-                    var record = new Bal(body);
-                    record
-                      .save()
-                      .then((doc) => {
-                        callback(response, body);
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
+                    callback(response, body);
                 }
             }
         );
@@ -250,15 +228,7 @@ function mpesaApi() {
                     console.log(error);
                     callback(false);
                 } else {
-                    var record = new Status(body);
-                    record
-                      .save()
-                      .then((doc) => {
-                        callback(response, body);
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
+                    callback(response, body);
                 }
             }
         );
@@ -292,15 +262,7 @@ function mpesaApi() {
                     console.log(error);
                     callback(false);
                 } else {
-                    var record = new Reverse(body);
-                    record
-                      .save()
-                      .then((doc) => {
-                        callback(response, body);
-                      })
-                      .catch((err) => {
-                        console.log(err);
-                      });
+                    callback(response, body);
                 }
             }
         );
@@ -336,27 +298,7 @@ function mpesaApi() {
                     callback(false);
 
                 } else {
-                    if (body.ResultCode == 0) {
-                        var record = new StkAccept(body);
-                        record
-                          .save()
-                          .then((doc) => {
-                            callback(response, body);
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                          });
-                    } else {
-                        var record = new StkCancel(body);
-                        record
-                          .save()
-                          .then((doc) => {
-                            callback(response, body);
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                          });
-                    }
+                    callback(response, body);
                 }
             }
         );
@@ -383,12 +325,7 @@ function mpesaApi() {
                     console.log(error);
                     callback(false);
                 } else {
-                    var record = new StkQuery(body);
-                    record.save().then(doc => {
-                        callback(response, body);
-                    }).catch(err => {
-                        console.log(err);
-                    })
+                    callback(response, body);
                 }
             }
         );

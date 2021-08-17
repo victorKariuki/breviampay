@@ -1,7 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const C2BConf = require("../models/C2B_confirmation");
-const C2BValid = require("../models/C2B_validation");
+
 // ValidationURL || ConfirmationURL || CallbackUrl
 // QueueTimeoutURL || ResultURL
 router.post("/:base/:id", function (req, res) {
