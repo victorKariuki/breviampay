@@ -9,7 +9,6 @@ const MongoStore = require("connect-mongo");
 const passport = require("passport");
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 var mpesaRouter = require("./routes/mpesa");
 var apiRouter = require("./routes/api");
 
