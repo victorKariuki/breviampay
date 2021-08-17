@@ -17,10 +17,10 @@ var app = express();
 // compress all responses
 app.use(compression());
 //passport
-require("./config/passport")(passport);
+/* require("./config/passport")(passport); */
 
 //use sessions for tracking logins
-app.use(
+/* app.use(
   session({
     secret: "work hard",
     resave: true,
@@ -30,10 +30,10 @@ app.use(
       dbName: require("./config/config").dbName,
     }),
   })
-);
+); */
 
-app.use(passport.initialize());
-app.use(passport.session());
+/* app.use(passport.initialize());
+app.use(passport.session()); */
 app.use(express.json());
 app.use(
   express.urlencoded({
