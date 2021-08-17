@@ -2,7 +2,6 @@ var express = require("express");
 var router = express.Router();
 var fs = require("fs");
 var mpesaApi = require("../handlers/mpesaMethods");
-const User = require("../models/User");
 var {
   ensureAuthenticated,
   forwardAuthenticated

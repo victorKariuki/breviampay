@@ -15,24 +15,7 @@ var apiRouter = require("./routes/api");
 var app = express();
 // compress all responses
 app.use(compression());
-//passport
-/* require("./config/passport")(passport); */
 
-//use sessions for tracking logins
-/* app.use(
-  session({
-    secret: "work hard",
-    resave: true,
-    saveUninitialized: true,
-    store: MongoStore.create({
-      mongoUrl: "mongoUrl: " + require("./config/config").dbURI,
-      dbName: require("./config/config").dbName,
-    }),
-  })
-); */
-
-/* app.use(passport.initialize());
-app.use(passport.session()); */
 app.use(express.json());
 app.use(
   express.urlencoded({
