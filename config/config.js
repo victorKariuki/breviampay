@@ -62,7 +62,7 @@ var mpesaApi = {
     return timestamp;
   },
 };
-let host = "http://127.0.0.1:20214";
+let host = "https://breviamtechnologies.xyz";
 module.exports = {
   con: mongoose,
   db: mongoose.connection,
