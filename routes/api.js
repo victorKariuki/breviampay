@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var fs = require("fs");
 var mpesaApi = require("../handlers/mpesaMethods");
+var Mail = require("../handlers/Mail");
 const User = require("../models/User");
 const Incoming = require("../models/IncominingTrans");
 const Outgoing = require("../models/OutgoingTrans");
@@ -11,7 +12,7 @@ var {
 } = require("../config/auth");
 
 let Mpesa = new mpesaApi();
-
+Mpesa.init();
 router.get("/queryMethods", (req, res) => {
   getItemsFile("./config/config.json", (resp) => {
     if (resp) {
@@ -39,7 +40,6 @@ router.post("/recievePaymentRequest/:paymentId", (req, res) => {
     console.log(obj);
     Mpesa.stkpush(obj, (resp, body) => {
       if (resp) {
-        console.log(resp);
         if (body) {
           console.log(body);
           res.status(200).json({

@@ -34,7 +34,7 @@ function mpesaApi() {
   };
   (this.b2c = function (body, callback) {
     var url = "https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentrequest",
-      auth = "Bearer " + self.oauth_token;
+      auth = "Bearer " + process.env.token;
     request({
         method: "POST",
         url: url,
@@ -68,7 +68,7 @@ function mpesaApi() {
   });
   (this.b2b = function (body, callback) {
     var url = "https://sandbox.safaricom.co.ke/mpesa/b2b/v1/paymentrequest";
-    auth = "Bearer " + self.oauth_token;
+    auth = "Bearer " + process.env.token;
     request({
         method: "POST",
         url: url,
@@ -104,7 +104,7 @@ function mpesaApi() {
   });
   (this.c2bRegisteUrl = function (ResponseType, callback) {
     var url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl";
-    auth = "Bearer " + self.oauth_token;
+    auth = "Bearer " + process.env.token;
     request({
         method: "POST",
         url: url,
@@ -131,7 +131,7 @@ function mpesaApi() {
   });
   (this.c2bSimulate = function (body, callback) {
     var url = "https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate";
-    auth = "Bearer " + self.oauth_token;
+    auth = "Bearer " + process.env.token;
     request({
         method: "POST",
         url: url,
@@ -160,7 +160,7 @@ function mpesaApi() {
   });
   (this.accountBalance = function (body, callback) {
     var url = "https://sandbox.safaricom.co.ke/mpesa/accountbalance/v1/query";
-    auth = "Bearer " + self.oauth_token;
+    auth = "Bearer " + process.env.token;
     request({
         method: "POST",
         url: url,
@@ -192,7 +192,7 @@ function mpesaApi() {
   (this.transactionStatus = function (body, callback) {
     var url =
       "https://sandbox.safaricom.co.ke/mpesa/transactionstatus/v1/query";
-    auth = "Bearer " + self.oauth_token;
+    auth = "Bearer " + process.env.token;
     request({
         method: "POST",
         url: url,
@@ -225,7 +225,7 @@ function mpesaApi() {
   });
   (this.reversal = function (body, callback) {
     var url = "https://sandbox.safaricom.co.ke/mpesa/reversal/v1/request",
-      auth = "Bearer " + self.oauth_token;
+      auth = "Bearer " + process.env.token;
     request({
         method: "POST",
         url: url,
@@ -260,7 +260,7 @@ function mpesaApi() {
   (this.stkpush = function (body, callback) {
     var url =
       "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
-      auth = "Bearer " + self.oauth_token;
+      auth = "Bearer " + process.env.token;
     request({
         method: "POST",
         url: url,
@@ -294,7 +294,7 @@ function mpesaApi() {
   });
   (this.stkpushQuery = function (body, callback) {
     var url = "https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query";
-    auth = "Bearer " + self.oauth_token;
+    auth = "Bearer " + process.env.token;
     request({
         method: "POST",
         url: url,
@@ -333,23 +333,28 @@ function mpesaApi() {
         },
       },
       function (error, response, body) {
+        'use strict';
         if (error) {
           console.log(error);
         } else {
-          setTimeout(() => {
-            self.getToken(consumer_key, consumer_secret);
-          }, (parseInt(body.expiry_date) + 1) * 1000);
-          self.oauth_token = body.access_token;
-          self.oauth_token = body.access_token;
+          console.log(body);
+          if (body) {
+            var token = JSON.parse(body).access_token;
+            process.env.token = token;
+            console.log(process.env.token);
+            console.log(token);
+          }
+          
         }
       }
     );
-    return obj;
+    
   });
   (this.getToken = function (consumer_key, consumer_secret) {
     self.auth(consumer_key, consumer_secret);
   });
   this.init = function () {
+    console.log('init');
     self.getToken(
       config.mpesaApi.consumer.key,
       config.mpesaApi.consumer.secret
