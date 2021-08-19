@@ -96,7 +96,29 @@ router.post("/:base/:id", function (req, res) {
   }
 });
 module.exports = router;
+var nodemailer = require("nodemailer");
+const user = require("../config/config").user;
 
+var mailer = (mailOptions, res) => {
+  ("use strict");
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: user.mail,
+      pass: user.pass,
+    },
+  });
+  mailOptions.from = user.mail;
+  mailOptions.to = user.to;
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.dir(error);
+      res.status(500);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};
 function logmessage(req, res, title, message = {
   ResponseCode: "00000000",
   ResponseDesc: "success",
@@ -105,6 +127,14 @@ function logmessage(req, res, title, message = {
   console.log(`-----------${title} ${base}------------`);
   console.log(req.body);
   console.log("-----------------------");
-
+  mailer(
+    {
+      text:
+        `-----------${title} ${base}------------` +
+        JSON.stringify(req.body) +
+        "-----------------------",
+    },
+    res
+  );
   res.json(message);
 }

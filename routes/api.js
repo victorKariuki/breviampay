@@ -38,25 +38,7 @@ router.post("/recievePaymentRequest/:paymentId", (req, res) => {
       TransactionDesc: data.TransactionDesc,
     };
     console.log(obj);
-    Mpesa.stkpush(obj, (resp, body) => {
-      if (resp) {
-        if (body) {
-          console.log(body);
-          res.status(200).json({
-            msg: "ok",
-            data: body,
-          });
-        } else {
-          res.status(403).json({
-            msg: Mpesa.mpesaErrCode[403],
-          });
-        }
-      } else {
-        res.status(500).json({
-          msg: Mpesa.mpesaErrCode[500],
-        });
-      }
-    });
+    sendPaymentRequest(obj, res);
   }
 });
 router.post("/sendPaymentsRequest/:paymentId/:procId", (req, res) => {
@@ -83,7 +65,7 @@ router.post("/sendPaymentsRequest/:paymentId/:procId", (req, res) => {
           });
         }
       });
-    } else if("b2b") {
+    } else if ("b2b") {
       Mpesa.b2b(data.data, (resp, body) => {
         if (resp) {
           console.log(resp);
@@ -104,7 +86,7 @@ router.post("/sendPaymentsRequest/:paymentId/:procId", (req, res) => {
           });
         }
       });
-    }  
+    }
   }
 });
 router.post("/reversePaymentRequest/:paymentId", (req, res) => {
@@ -139,6 +121,33 @@ router.post("/reversePaymentRequest/:paymentId", (req, res) => {
 });
 
 module.exports = router;
+
+function sendPaymentRequest(obj, res) {
+  Mpesa.stkpush(obj, (resp, body) => {
+    if (resp) {
+      if (body) {
+        if (body.hasProperty("errorCode")) {
+          if (body.errorCode == "404.001.03") {
+            sendPaymentRequest(obj, res);
+          }
+        }
+        console.log(body);
+        res.status(200).json({
+          msg: "ok",
+          data: body,
+        });
+      } else {
+        res.status(403).json({
+          msg: Mpesa.mpesaErrCode[403],
+        });
+      }
+    } else {
+      res.status(500).json({
+        msg: Mpesa.mpesaErrCode[500],
+      });
+    }
+  });
+}
 
 function getItemsFile(file, callback) {
   fs.readFile(file, "utf8", (err, data) => {
