@@ -19,34 +19,33 @@ let adressSchema = new Schema({
   _id: true,
   autoIndex: false,
 });
-var UserSchema = new Schema(
-  {
-    user: {
-      lastName: String,
-      firstName: String,
-    },
-    userMail: {
-      type: String,
-    },
-    gender: String,
-    company:String,
-    address: [adressSchema],
-    phoneNumber: String,
-    password: String,
-    verified: {
-      type: Boolean,
-      default: false,
-    },
-    timestamp: {
-      type: Date,
-      default: date,
-    },
+var UserSchema = new Schema({
+  user: {
+    lastName: String,
+    firstName: String,
   },
-  {
-    _id: true,
-    autoIndex: false,
-  }
-);
+  userMail: {
+    type: String,
+  },
+  consumer_key: String,
+  consumer_secret: String,
+  gender: String,
+  company: String,
+  address: [adressSchema],
+  phoneNumber: String,
+  password: String,
+  verified: {
+    type: Boolean,
+    default: false,
+  },
+  timestamp: {
+    type: Date,
+    default: date,
+  },
+}, {
+  _id: true,
+  autoIndex: false,
+});
 
 User = con.model("User", UserSchema);
 module.exports = User;
