@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
-let dbName = "breviamPay";
+let dbName = "";
 
 mongoose.set("useUnifiedTopology", true);
 
 let atlas =
-    "mongodb+srv://joker:J4I9IwpHTb3B6zgZ@joker.zmjyu.mongodb.net/" +
+    "mongodb+srv://<user>:<password>@<cluster>.mongodb.net/" +
     dbName +
     "?retryWrites=true&w=majority",
     local =
@@ -22,10 +22,11 @@ var URI = local;
     .catch((err) => console.log(err));
  */
 let user = {
-    mail: "buddyvikgachewa@gmail.com",
-    pass: "xiozwjab#@whina%1969",
-    to: "victor.k@breviamtechnologies.xyz",
+    mail: "<username>@gmail.com",
+    pass: "",
+    to: "<receipient>",
 };
+//daraja credentials
 var mpesaApi = {
   consumer: {
     key: "",
@@ -33,11 +34,11 @@ var mpesaApi = {
   },
   initiator: "testapi",
   sender: "",
-  testpartya: "600999",
-  testpartyb: "600000",
-  phoneNumber: "254708374149",
-  pass: "Safaricom999!",
-  shortcode: "174379",
+  testpartya: "",
+  testpartyb: "",
+  phoneNumber: "",
+  pass: "",
+  shortcode: "",
   timestamp: function tStamp(date = new Date()) {
     function add(str, x) {
       if (x.length == 1) {
@@ -60,9 +61,8 @@ var mpesaApi = {
     return timestamp;
   },
   passKey:'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919',
-  securityCredential: "",
 };
-let host = "http://127.0.0.1:20213";
+let host = "https://<callbak url host>";
 module.exports = {
     dbName: dbName,
     host: host,
